@@ -25,6 +25,7 @@ public class SaveFile implements Constants{
 		// cluster1: vertex11, vertex12, vertex13
 		// cluster2: vertex21, vertex22, vertex23
 		// ...
+		@SuppressWarnings("unchecked")
 		public void clustResultsCommaDelimited(String filename, double eps, int mu, double modularity){
 
 				int nonmembers = 0;
@@ -51,10 +52,10 @@ public class SaveFile implements Constants{
 
 
 					// iterate through found clusters, print members of each cluster
-					Iterator itCluster = clusterMembers.keySet().iterator();
+					Iterator<Integer> itCluster = clusterMembers.keySet().iterator();
 					while (itCluster.hasNext()) {
 						int cluster = (Integer) itCluster.next();
-						TreeSet<String> members  = (TreeSet) clusterMembers.get( cluster );
+						TreeSet<String> members  = (TreeSet<String>) clusterMembers.get( cluster );
 						if ( members.size() == 0 ) { continue; }
 						else {
 							if (cluster == OUTLIER)  { out.write("\nOUTLIERS:");  }
@@ -81,9 +82,9 @@ public class SaveFile implements Constants{
 
 
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public void clustResultsCommaDelimited(String filename){
 
-						int nonmembers = 0;
 						String outFile = filename + "__AHSCAN_clusters.txt";
 						try {
 
@@ -130,6 +131,7 @@ public class SaveFile implements Constants{
 		// save clustering results into file
 		// file format:
 		// vertex \t cluster \n
+		@SuppressWarnings("unchecked")
 		public void clustResultsTabDelimited(String filename){
 
 				String outFile = filename + "__AHSCAN_clusters.tc";
@@ -138,8 +140,7 @@ public class SaveFile implements Constants{
 					BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
 
 					//iterate through vertices, print vertex label and clusterId
-					TreeMap <Integer, TreeSet> clusterMembers = new TreeMap<Integer, TreeSet>();
-					Iterator itVertex = net.getVertexIterator();
+					Iterator<Vertex> itVertex = net.getVertexIterator();
 					while (itVertex.hasNext()) {
 							Vertex vertex = (Vertex) itVertex.next();
 							int cluster = vertex.getClusterId();
