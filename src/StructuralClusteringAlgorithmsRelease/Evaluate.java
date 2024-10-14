@@ -9,9 +9,7 @@
 
 package StructuralClusteringAlgorithmsRelease;
 
-import java.io.*;
 import java.util.*;
-import java.lang.Math;
 import java.math.*;
 
 public class Evaluate implements Constants{
@@ -28,6 +26,7 @@ public class Evaluate implements Constants{
 	// gives the number of intra-cluster edges (edges that fall within  clusters)
 	// or inter-cluster edges (edges across the clusters)
 	//
+	@SuppressWarnings("unchecked")
 	public int numEdges(int type){
 
 			// type = 0, intra-cluster edges
@@ -38,7 +37,7 @@ public class Evaluate implements Constants{
 			int totalEdges = 0;
 			int total = 0;
 
-			Iterator itEdge = net.getEdgeIterator();
+			Iterator<Edge> itEdge = net.getEdgeIterator();
 			while (itEdge.hasNext()) {
 				edge = (Edge) itEdge.next();
 				vertexA = net.getVertex(edge.getVertexA() );
@@ -66,6 +65,7 @@ public class Evaluate implements Constants{
 	//
 	// Modularity for directed networks. works for directed&weighted and directed&unweighted networks
 	//
+		@SuppressWarnings("unchecked")
 		public double calculateDirectedModularity(int optFunction)
 		{
 			// This method calculate directed modularity as described in Community structure in directed networks, EA leicht and MEJ Newman.
@@ -87,7 +87,7 @@ public class Evaluate implements Constants{
 			Vertex vertex_fr;
 			Vertex vertex_to;
 			Vertex Op_vertex;
-			Iterator itVertex_fr = net.getVertexIterator();
+			Iterator<Vertex> itVertex_fr = net.getVertexIterator();
 
 			while (itVertex_fr.hasNext())
 			{ // Loop factor initialization
@@ -115,7 +115,7 @@ public class Evaluate implements Constants{
 
 				outDeg = vertex_fr.getOutDegree();
 
-				Iterator itVertex_to = net.getVertexIterator();
+				Iterator<Vertex> itVertex_to = net.getVertexIterator();
 
 				while (itVertex_to.hasNext())
 				{ // second loop
@@ -157,7 +157,7 @@ public class Evaluate implements Constants{
 			DirQ = DirQ / m;
 
 			BigDecimal bd = new BigDecimal(DirQ);
-			bd = bd.setScale(4,BigDecimal.ROUND_HALF_UP);
+			bd = bd.setScale(4, RoundingMode.HALF_UP);
     		DirQ = bd.doubleValue();
 
 			return DirQ;
@@ -167,6 +167,7 @@ public class Evaluate implements Constants{
 	//
 	// Modularity for undirected networks. works for undirected&weighted and undirected&unweighted networks
 	//
+	@SuppressWarnings("unchecked")
 	public double calculateUndirectedModularity(int optFunction)
 	{
 		// Traditional Newman's modularity
@@ -188,7 +189,7 @@ public class Evaluate implements Constants{
 
 		Vertex vertex_fr;
 		Vertex vertex_to;
-		Iterator itVertex_fr = net.getVertexIterator();
+		Iterator<Vertex> itVertex_fr = net.getVertexIterator();
 
 		//System.out.println(optFunction+"m: "+m);
 
@@ -196,7 +197,7 @@ public class Evaluate implements Constants{
 		{ // first loop
 			vertex_fr = (Vertex) itVertex_fr.next();
 
-			Iterator itVertex_to = net.getVertexIterator();
+			Iterator<Vertex> itVertex_to = net.getVertexIterator();
 			while (itVertex_to.hasNext())
 			{ // second loop
 				vertex_to = (Vertex) itVertex_to.next();
@@ -231,7 +232,7 @@ public class Evaluate implements Constants{
 
 
 		BigDecimal bd = new BigDecimal(Q);
-		bd = bd.setScale(4,BigDecimal.ROUND_HALF_UP);
+		bd = bd.setScale(4, RoundingMode.HALF_UP);
     	Q = bd.doubleValue();
 
 		return Q;
@@ -244,20 +245,20 @@ public class Evaluate implements Constants{
 
 
 
+	@SuppressWarnings("unchecked")
 	public double calculateHomogeneity(){
 
 				TreeMap<Integer, Double> clusterTotalHomogeneity = new  TreeMap<Integer, Double>();
 				TreeMap<Integer, Integer> clusterTotalSize = new  TreeMap<Integer, Integer>();
 
 				int vertexClust;
-				int nonmembers = 0;
 				int ls, ds;
 				double vertexHomogeneity = 0.0;
 				double homogeneity = 0.0;
 
 
 				Vertex vertex;
-				Iterator itVertex = net.getVertexIterator();
+				Iterator<Vertex> itVertex = net.getVertexIterator();
 				while (itVertex.hasNext()) {
 					vertex = (Vertex) itVertex.next();
 					vertexClust = vertex.getClusterId();
@@ -265,28 +266,26 @@ public class Evaluate implements Constants{
 					ls = 0;
 					ds = 0;
 
-					if (vertexClust < 0) { nonmembers++; }
-					else {									// member of a cluster
 
-						Set neighbors = vertex.getNeighborhood();
-						Iterator itNeighbors = neighbors.iterator();
-						while (itNeighbors.hasNext() ){
-							String neighbor_s = (String) itNeighbors.next();
-							Vertex neighbor = net.getVertex(neighbor_s);
+					Set<String> neighbors = vertex.getNeighborhood();
+					Iterator<String> itNeighbors = neighbors.iterator();
+					while (itNeighbors.hasNext() ){
+						String neighbor_s = (String) itNeighbors.next();
+						Vertex neighbor = net.getVertex(neighbor_s);
 
-							if (vertexClust == neighbor.getClusterId() ) {	// vertices that belong to the same cluster
-								ls++;
-							}
+						if (vertexClust == neighbor.getClusterId() ) {	// vertices that belong to the same cluster
+							ls++;
 						}
-						ds = neighbors.size();
-						vertexHomogeneity = (double) ls / ds;
-
-						add(clusterTotalHomogeneity, vertexClust, vertexHomogeneity);
-						add(clusterTotalSize, vertexClust, 1);
-
-						//System.out.println(vertex.getLabel() + " -- " + vertexHomogeneity);
-
 					}
+					ds = neighbors.size();
+					vertexHomogeneity = (double) ls / ds;
+
+					add(clusterTotalHomogeneity, vertexClust, vertexHomogeneity);
+					add(clusterTotalSize, vertexClust, 1);
+
+					//System.out.println(vertex.getLabel() + " -- " + vertexHomogeneity);
+
+				
 			  	} // while
 
 
@@ -412,6 +411,7 @@ public class Evaluate implements Constants{
 	*/
 
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public double calculateDensity(){
 
 		TreeMap <Integer, Integer> edgesWithinCluster = new TreeMap<Integer, Integer>();
@@ -419,7 +419,7 @@ public class Evaluate implements Constants{
 		Vertex vertexA, vertexB;
 		Edge edge;
 
-		Iterator itEdge = net.getEdgeIterator();
+		Iterator<Edge> itEdge = net.getEdgeIterator();
 		while (itEdge.hasNext()) {
 			edge = (Edge) itEdge.next();
 			vertexA = net.getVertex(edge.getVertexA() );
@@ -454,7 +454,6 @@ public class Evaluate implements Constants{
 
 		// density calculation
 		double density          = 0.0;
-		double total_density    = 0.0;
 		double weighted_density = 0.0;
 
 		Iterator itCluster = verticesWithinCluster.keySet().iterator();
@@ -465,14 +464,11 @@ public class Evaluate implements Constants{
 			//System.out.println("edges within cluster: " + edgesWithinCluster.get(cluster) + " vertices within cluster: " + clusterSize);
 			density = (double) edgesWithinCluster.get(cluster) / (clusterSize * (clusterSize - 1) / 2); // nominator: number of edges within the cluster
 																											// denominator: possible number of edges
-			total_density += density;
 			weighted_density += (double) density * clusterSize;
 
 		}
 
 
-		// denominator: number of clusters
-		double average_density = total_density / verticesWithinCluster.keySet().size();
 		// denominator: number of vertices
 		double weighted_average_density = weighted_density / net.getNumVertices();
 
@@ -486,23 +482,24 @@ public class Evaluate implements Constants{
 
 	// local clustering coefficient: calculated for each vertex in the network/group
 	// local-clust-coefficient(v1) = edges between nearest neighbors of v1 / possible number of connections betweeen neighbors of v1
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public double calculateLocalClustCoef(){
 
 			double clust_coef = 0.0; double total_clust_coef = 0.0;
 			Vertex vertex;
-			Iterator itVertex = net.getVertexIterator();
+			Iterator<Vertex> itVertex = net.getVertexIterator();
 			while (itVertex.hasNext()) {
 				vertex = (Vertex) itVertex.next();
 				int vertexClust = vertex.getClusterId();
 
-				Set neighbors = vertex.getNeighborhood();
-				Set neighbors_of_same_group = new HashSet();
-				Iterator itNeighbors = neighbors.iterator();
+				Set<String> neighbors = vertex.getNeighborhood();
+				Set<String> neighbors_of_same_group = new HashSet();
+				Iterator<String> itNeighbors = neighbors.iterator();
 				while (itNeighbors.hasNext() ){
 					String neighbor_s = (String) itNeighbors.next();
 					Vertex neighbor = net.getVertex(neighbor_s);
 					if (vertexClust == neighbor.getClusterId() ){
-						neighbors_of_same_group.add(neighbor);
+						neighbors_of_same_group.add(neighbor.toString());
 					}
 				}
 
@@ -561,6 +558,7 @@ public class Evaluate implements Constants{
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void add(TreeMap<String, Integer> X, String key, int increment){
 
 			if (X.containsKey(key)){
