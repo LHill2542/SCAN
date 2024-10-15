@@ -33,3 +33,6 @@ replay_pid*
 .classpath
 .project
 /bin
+
+# output files
+*.txt
